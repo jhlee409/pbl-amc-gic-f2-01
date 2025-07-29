@@ -88,6 +88,7 @@ Preferred communication style: Simple, everyday language.
 2. **Backend Build**: esbuild bundles server code to `dist/index.js`
 3. **Database Migration**: Drizzle Kit handles schema migrations
 4. **Asset Management**: Static assets served from build directory
+5. **Static File Serving**: Production server correctly serves built assets via `serveStatic` function
 
 ### Environment Configuration
 - **Development**: Uses tsx for TypeScript execution and file watching
@@ -97,7 +98,15 @@ Preferred communication style: Simple, everyday language.
 
 The application is designed for educational use in medical training, providing an interactive way to learn about gastric cancer diagnosis and treatment through case-based learning with visual aids and decision-making exercises.
 
-## Recent Changes (January 2025)
+## Recent Changes (July 2025)
+
+### Deployment Configuration Verified
+- **Build Process**: Confirmed that the production build process works correctly with `npm run build`
+- **Static File Serving**: Verified that the `serveStatic` function in `server/vite.ts` correctly serves built assets from `dist/public`
+- **Production Server**: Tested that `NODE_ENV=production node dist/index.js` successfully starts the server and serves static files
+- **Deployment Ready**: The application is properly configured for production deployment with all necessary static asset serving functionality
+
+## Previous Changes (January 2025)
 
 ### Final Implementation
 - **Simplified learning completion**: Removed file upload system per user request
