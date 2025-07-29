@@ -99,20 +99,18 @@ The application is designed for educational use in medical training, providing a
 
 ## Recent Changes (January 2025)
 
-### Assignment Submission System
-- **Email-free submission system**: Implemented file upload with server-side logging instead of email integration
-- **Student information collection**: Added student name input field for assignment tracking
-- **Instructor dashboard**: Created `/submissions` page for viewing all submitted assignments
-- **File management**: Submissions stored in `uploads/` directory with detailed logging
-- **Notification system**: 
-  - Real-time console logging with Korean language notifications
-  - CSV-format log file (`submissions.log`) for persistent tracking
-  - Web dashboard for instructor to view submissions
-  - Direct file download capability for instructors
-
-### User Interface Improvements
+### Final Implementation
+- **Simplified learning completion**: Removed file upload system per user request
+- **Clean educational flow**: Students complete the interactive case study without submission requirements
 - **Korean language interface**: All text and notifications in Korean
-- **Enhanced assignment component**: Separate submission form with validation
-- **Success feedback**: Visual confirmation with green checkmark after submission
-- **Responsive design**: Mobile-friendly layout following Material Design principles
+- **Material Design UI**: Light blue message boxes and light orange answer buttons
+- **Responsive button layout**: 2 buttons per row for longer text options, 4 for shorter ones
 - **Auto-scroll functionality**: Smooth scrolling to new content as conversation progresses
+- **Medical image integration**: Seamless loading of EGD, biopsy, CT, and PET scan images from Supabase
+- **Interactive learning completion**: Final step shows IHC report with completion message
+
+### Technical Architecture Updates
+- **Streamlined backend**: Removed file upload and email functionality
+- **Clean component structure**: Simplified ConversationStep component without upload logic
+- **Supabase integration**: Stable image loading from pbl01 bucket
+- **Single-page application**: Focused on core learning experience without additional dashboards
