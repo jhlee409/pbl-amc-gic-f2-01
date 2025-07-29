@@ -73,7 +73,7 @@ const conversationSteps = {
   },
   9: {
     step: 9,
-    type: 'assignment',
+    type: 'final_assignment',
     content: '마지막으로 과제입니다. 제시되는 실제 환자의 IHC의 결과를 보여주는 병리 report에서 그 5가지 항목의 유무를 해석하고, 이 결과에 따라 사용되는 흔한 chemo regimen 한 가지를 약자로 기술하고, 이 치료를 받은 후 기대할 수 있는 기대 여명을 적어 PBS_amc_F2_01_이름.docx 파일로 제출해 주세요.<br><br>수고하셨습니다.'
   }
 };
@@ -115,27 +115,7 @@ export default function Home() {
     }
   };
 
-  const handleFileSubmit = async (file: File) => {
-    try {
-      const formData = new FormData();
-      formData.append('assignment', file);
-      
-      const response = await fetch('/api/submit-assignment', {
-        method: 'POST',
-        body: formData,
-      });
-      
-      if (response.ok) {
-        const result = await response.json();
-        console.log('File submitted successfully:', result);
-        // You could show a success message here
-      } else {
-        console.error('File submission failed');
-      }
-    } catch (error) {
-      console.error('Error submitting file:', error);
-    }
-  };
+
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -164,7 +144,6 @@ export default function Home() {
               stepData={conversationSteps[step as keyof typeof conversationSteps]}
               onNextStep={handleNextStep}
               onSelectAnswer={handleSelectAnswer}
-              onFileSubmit={handleFileSubmit}
             />
           ))}
 
@@ -174,7 +153,6 @@ export default function Home() {
             stepData={conversationSteps[currentStep as keyof typeof conversationSteps]}
             onNextStep={handleNextStep}
             onSelectAnswer={handleSelectAnswer}
-            onFileSubmit={handleFileSubmit}
           />
 
           {/* Show error message if any */}
