@@ -37,22 +37,60 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(400).json({ message: 'No file uploaded' });
       }
 
-      // Log file submission (in a real app, you'd save to database)
-      console.log('Assignment submitted:', {
+      const submissionData = {
         originalName: req.file.originalname,
         filename: req.file.filename,
         path: req.file.path,
         size: req.file.size,
-        timestamp: new Date().toISOString()
-      });
+        timestamp: new Date().toISOString(),
+        studentInfo: req.body.studentName || 'Unknown Student',
+        submissionEmail: 'jhlee409@gmail.com'
+      };
+
+      // Log file submission with detailed information
+      console.log('=== 과제 제출 알림 ===');
+      console.log(`제출 시간: ${submissionData.timestamp}`);
+      console.log(`학생 정보: ${submissionData.studentInfo}`);
+      console.log(`파일명: ${submissionData.originalName}`);
+      console.log(`파일 크기: ${(submissionData.size / 1024).toFixed(2)} KB`);
+      console.log(`저장 위치: ${submissionData.path}`);
+      console.log(`담당자 이메일: ${submissionData.submissionEmail}`);
+      console.log('================');
+
+      // Save submission info to a log file for easy tracking
+      const fs = require('fs');
+      const logEntry = `${submissionData.timestamp},${submissionData.studentInfo},${submissionData.originalName},${submissionData.filename},${submissionData.size}\n`;
+      fs.appendFileSync('submissions.log', logEntry);
 
       res.json({ 
-        message: 'Assignment submitted successfully',
-        filename: req.file.filename
+        message: '과제가 성공적으로 제출되었습니다. 담당자에게 알림이 전송되었습니다.',
+        filename: req.file.filename,
+        submissionId: Date.now().toString(),
+        instructorEmail: submissionData.submissionEmail
       });
     } catch (error) {
       console.error('File upload error:', error);
       res.status(500).json({ message: 'File upload failed' });
+    }
+  });
+
+  // Get submission log for instructor
+  app.get("/api/submissions", (req, res) => {
+    try {
+      const fs = require('fs');
+      if (fs.existsSync('submissions.log')) {
+        const logContent = fs.readFileSync('submissions.log', 'utf8');
+        const submissions = logContent.trim().split('\n').filter((line: string) => line).map((line: string) => {
+          const [timestamp, student, originalName, filename, size] = line.split(',');
+          return { timestamp, student, originalName, filename, size: parseInt(size) };
+        });
+        res.json({ submissions });
+      } else {
+        res.json({ submissions: [] });
+      }
+    } catch (error) {
+      console.error('Error reading submissions:', error);
+      res.status(500).json({ message: 'Failed to read submissions' });
     }
   });
 

@@ -96,3 +96,23 @@ Preferred communication style: Simple, everyday language.
 - **Cross-platform**: ESM modules throughout the application
 
 The application is designed for educational use in medical training, providing an interactive way to learn about gastric cancer diagnosis and treatment through case-based learning with visual aids and decision-making exercises.
+
+## Recent Changes (January 2025)
+
+### Assignment Submission System
+- **Email-free submission system**: Implemented file upload with server-side logging instead of email integration
+- **Student information collection**: Added student name input field for assignment tracking
+- **Instructor dashboard**: Created `/submissions` page for viewing all submitted assignments
+- **File management**: Submissions stored in `uploads/` directory with detailed logging
+- **Notification system**: 
+  - Real-time console logging with Korean language notifications
+  - CSV-format log file (`submissions.log`) for persistent tracking
+  - Web dashboard for instructor to view submissions
+  - Direct file download capability for instructors
+
+### User Interface Improvements
+- **Korean language interface**: All text and notifications in Korean
+- **Enhanced assignment component**: Separate submission form with validation
+- **Success feedback**: Visual confirmation with green checkmark after submission
+- **Responsive design**: Mobile-friendly layout following Material Design principles
+- **Auto-scroll functionality**: Smooth scrolling to new content as conversation progresses

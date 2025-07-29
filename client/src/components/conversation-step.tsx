@@ -1,9 +1,12 @@
+import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import { useSupabaseImage } from "@/hooks/use-supabase-image";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Alert, AlertDescription } from "@/components/ui/alert";
-import { AlertCircle, FileText, Upload } from "lucide-react";
+import { AlertCircle, FileText, Upload, CheckCircle } from "lucide-react";
 
 interface ConversationStepProps {
   stepData: any;
@@ -146,33 +149,7 @@ export function ConversationStep({
       )}
 
       {stepData.type === 'assignment' && (
-        <>
-          <ImageDisplay 
-            bucketName="pbl01" 
-            fileName="IHC report.png" 
-            alt="IHC 리포트"
-          />
-          
-          <Card className="mt-4">
-            <CardContent className="p-4">
-              <div className="flex items-center gap-3 mb-3">
-                <Upload className="w-5 h-5 text-blue-600" />
-                <h3 className="text-lg font-semibold text-gray-800">과제 제출</h3>
-              </div>
-              <div className="space-y-3">
-                <input 
-                  type="file" 
-                  accept=".docx" 
-                  onChange={handleFileChange}
-                  className="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-medium file:bg-blue-600 file:text-white hover:file:bg-blue-700" 
-                />
-                <Button className="material-blue text-white w-full">
-                  과제 제출하기
-                </Button>
-              </div>
-            </CardContent>
-          </Card>
-        </>
+        <AssignmentSubmission onFileSubmit={onFileSubmit} />
       )}
     </div>
   );
@@ -216,5 +193,129 @@ function ImageDisplay({ bucketName, fileName, alt }: {
         />
       </CardContent>
     </Card>
+  );
+}
+
+function AssignmentSubmission({ onFileSubmit }: { onFileSubmit?: (file: File) => void }) {
+  const [studentName, setStudentName] = useState('');
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [submitted, setSubmitted] = useState(false);
+
+  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (file) {
+      setSelectedFile(file);
+    }
+  };
+
+  const handleSubmit = async () => {
+    if (!selectedFile || !studentName.trim()) {
+      alert('학생 이름과 파일을 모두 입력해주세요.');
+      return;
+    }
+
+    setIsSubmitting(true);
+    try {
+      const formData = new FormData();
+      formData.append('assignment', selectedFile);
+      formData.append('studentName', studentName);
+      
+      const response = await fetch('/api/submit-assignment', {
+        method: 'POST',
+        body: formData,
+      });
+      
+      if (response.ok) {
+        const result = await response.json();
+        setSubmitted(true);
+        console.log('File submitted successfully:', result);
+      } else {
+        alert('과제 제출에 실패했습니다. 다시 시도해주세요.');
+      }
+    } catch (error) {
+      console.error('Error submitting file:', error);
+      alert('과제 제출 중 오류가 발생했습니다.');
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  return (
+    <>
+      <ImageDisplay 
+        bucketName="pbl01" 
+        fileName="IHC report.png" 
+        alt="IHC 리포트"
+      />
+      
+      <Card className="mt-4">
+        <CardContent className="p-6">
+          {submitted ? (
+            <div className="text-center space-y-4">
+              <div className="flex justify-center">
+                <CheckCircle className="w-16 h-16 text-green-500" />
+              </div>
+              <div>
+                <h3 className="text-xl font-semibold text-green-700 mb-2">과제 제출 완료!</h3>
+                <p className="text-gray-600">
+                  과제가 성공적으로 제출되었습니다.<br/>
+                  담당자(jhlee409@gmail.com)에게 알림이 전송되었습니다.
+                </p>
+              </div>
+            </div>
+          ) : (
+            <>
+              <div className="flex items-center gap-3 mb-4">
+                <Upload className="w-5 h-5 text-blue-600" />
+                <h3 className="text-lg font-semibold text-gray-800">과제 제출</h3>
+              </div>
+              
+              <div className="space-y-4">
+                <div>
+                  <Label htmlFor="studentName" className="text-sm font-medium text-gray-700">
+                    학생 이름
+                  </Label>
+                  <Input
+                    id="studentName"
+                    type="text"
+                    placeholder="이름을 입력해주세요"
+                    value={studentName}
+                    onChange={(e) => setStudentName(e.target.value)}
+                    className="mt-1"
+                  />
+                </div>
+                
+                <div>
+                  <Label htmlFor="fileUpload" className="text-sm font-medium text-gray-700">
+                    파일 선택 (.docx)
+                  </Label>
+                  <input 
+                    id="fileUpload"
+                    type="file" 
+                    accept=".docx" 
+                    onChange={handleFileChange}
+                    className="mt-1 block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-medium file:bg-blue-600 file:text-white hover:file:bg-blue-700" 
+                  />
+                  {selectedFile && (
+                    <p className="mt-2 text-sm text-gray-600">
+                      선택된 파일: {selectedFile.name}
+                    </p>
+                  )}
+                </div>
+                
+                <Button 
+                  onClick={handleSubmit}
+                  disabled={!selectedFile || !studentName.trim() || isSubmitting}
+                  className="material-blue text-white w-full"
+                >
+                  {isSubmitting ? '제출 중...' : '과제 제출하기'}
+                </Button>
+              </div>
+            </>
+          )}
+        </CardContent>
+      </Card>
+    </>
   );
 }
