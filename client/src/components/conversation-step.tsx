@@ -28,7 +28,6 @@ export function ConversationStep({
           alt={stepData.imageAlt}
         />
       )}
-
       {stepData.type === 'multipleImages' && stepData.images && (
         <>
           {stepData.images.map((img: any, index: number) => (
@@ -41,7 +40,6 @@ export function ConversationStep({
           ))}
         </>
       )}
-
       {/* Message Content */}
       <div className="conversation-message rounded-lg p-4 mb-4 shadow-sm">
         <div className="flex items-start gap-3">
@@ -56,7 +54,6 @@ export function ConversationStep({
           </div>
         </div>
       </div>
-
       {/* Buttons based on type */}
       {(stepData.type === 'message' || stepData.type === 'image') && (
         <div className="flex justify-center">
@@ -68,7 +65,6 @@ export function ConversationStep({
           </Button>
         </div>
       )}
-
       {(stepData.type === 'multipleChoice' || stepData.type === 'multipleImages') && (
         <div className="flex flex-col gap-3">
           {stepData.options.map((option: string, index: number) => {
@@ -95,7 +91,6 @@ export function ConversationStep({
           })}
         </div>
       )}
-
       {stepData.type === 'final' && (
         <>
           {/* Marker buttons */}
@@ -106,7 +101,7 @@ export function ConversationStep({
               for (let i = 0; i < markers.length; i += 2) {
                 const rowMarkers = markers.slice(i, i + 2);
                 rows.push(
-                  <div key={i} className="flex flex-wrap gap-3 justify-center">
+                  <div key={i} className="flex flex-wrap gap-3 justify-center text-left text-[#fae0bc] font-normal">
                     {rowMarkers.map((marker: string, rowIndex: number) => (
                       <Button
                         key={i + rowIndex}
@@ -147,7 +142,6 @@ export function ConversationStep({
           </div>
         </>
       )}
-
       {stepData.type === 'final_assignment' && (
         <>
           <ImageDisplay 
