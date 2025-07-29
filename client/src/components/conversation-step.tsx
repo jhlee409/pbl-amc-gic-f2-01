@@ -99,16 +99,28 @@ export function ConversationStep({
       {stepData.type === 'final' && (
         <>
           {/* Marker buttons */}
-          <div className="flex flex-wrap gap-3 justify-center mb-4">
-            {stepData.markers?.map((marker: string, index: number) => (
-              <Button
-                key={index}
-                className="option-button text-gray-800 px-4 py-2 font-medium shadow-sm text-sm"
-                disabled
-              >
-                {index + 1}. {marker}
-              </Button>
-            ))}
+          <div className="flex flex-col gap-3">
+            {stepData.markers && (() => {
+              const markers = stepData.markers;
+              const rows = [];
+              for (let i = 0; i < markers.length; i += 2) {
+                const rowMarkers = markers.slice(i, i + 2);
+                rows.push(
+                  <div key={i} className="flex flex-wrap gap-3 justify-center">
+                    {rowMarkers.map((marker: string, rowIndex: number) => (
+                      <Button
+                        key={i + rowIndex}
+                        className="option-button text-gray-800 px-4 py-3 font-medium shadow-sm hover:scale-105 transition-all duration-200 flex-1 min-w-0 max-w-sm text-sm"
+                        disabled
+                      >
+                        {i + rowIndex + 1}. {marker}
+                      </Button>
+                    ))}
+                  </div>
+                );
+              }
+              return rows;
+            })()}
           </div>
 
           {/* Final content message */}
