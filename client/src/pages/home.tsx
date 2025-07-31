@@ -105,10 +105,16 @@ export default function Home() {
     }
   };
 
+  // 타입 가드 함수 추가
+  const isValidStep = (step: number): step is keyof typeof conversationSteps => {
+    return step in conversationSteps;
+  }
+
   const handleSelectAnswer = (stepNumber: number, selectedIndex: number) => {
-    const stepData = conversationSteps[stepNumber as keyof typeof conversationSteps];
+    if (!isValidStep(stepNumber)) return;
+    const stepData = conversationSteps[stepNumber];
     
-    if ('correctAnswer' in stepData && selectedIndex === stepData.correctAnswer) {
+    if ('correctAnswer' in stepData && stepData.correctAnswer !== undefined && selectedIndex === stepData.correctAnswer) {
       handleNextStep(stepNumber + 1);
     } else {
       setErrorMessage('기대한 대답이 아닙니다. 다시 생각해보고 대답해 주세요.');
