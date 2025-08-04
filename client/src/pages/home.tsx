@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { ConversationStep } from '@/components/conversation-step';
 import { ProgressIndicator } from '@/components/progress-indicator';
 import { Alert, AlertDescription } from '@/components/ui/alert';
@@ -73,8 +73,7 @@ const conversationSteps = {
   },
   9: {
     step: 9,
-    type: 'final_assignment',
-    content: '마지막으로 과제입니다. 제시되는 실제 환자의 IHC의 결과를 보여주는 병리 report에서 그 5가지 항목의 유무를 해석하고, 이 결과에 따라 사용되는 흔한 chemo regimen 한 가지를 약자로 기술하고, 이 치료를 받은 후 기대할 수 있는 기대 여명을 적어 PBS_amc_F2_01_이름.docx 파일로 제출해 주세요.<br><br>수고하셨습니다.'
+    type: 'final_assignment'
   }
 };
 
@@ -82,6 +81,7 @@ export default function Home() {
   const [currentStep, setCurrentStep] = useState(1);
   const [completedSteps, setCompletedSteps] = useState<number[]>([]);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const [selectedAnswers, setSelectedAnswers] = useState<Record<number, number>>({});
 
   const totalSteps = Object.keys(conversationSteps).length;
 
@@ -114,8 +114,14 @@ export default function Home() {
     if (!isValidStep(stepNumber)) return;
     const stepData = conversationSteps[stepNumber];
     
+    // 선택된 답변을 저장
+    setSelectedAnswers(prev => ({ ...prev, [stepNumber]: selectedIndex }));
+    
     if ('correctAnswer' in stepData && stepData.correctAnswer !== undefined && selectedIndex === stepData.correctAnswer) {
-      handleNextStep(stepNumber + 1);
+      // 정답인 경우 다음 단계로 진행
+      setTimeout(() => {
+        handleNextStep(stepNumber + 1);
+      }, 1000); // 1초 후 다음 단계로
     } else {
       setErrorMessage('기대한 대답이 아닙니다. 다시 생각해보고 대답해 주세요.');
     }
@@ -139,8 +145,6 @@ export default function Home() {
 
       {/* Main Content */}
       <main className="container mx-auto px-4 py-6 max-w-4xl">
-        <ProgressIndicator currentStep={currentStep} totalSteps={totalSteps} />
-
         {/* Conversation Container */}
         <div className="conversation-container">
           {/* Show completed steps */}
@@ -150,6 +154,7 @@ export default function Home() {
               stepData={conversationSteps[step as keyof typeof conversationSteps]}
               onNextStep={handleNextStep}
               onSelectAnswer={handleSelectAnswer}
+              selectedAnswer={selectedAnswers[step]}
             />
           ))}
 
@@ -159,6 +164,7 @@ export default function Home() {
             stepData={conversationSteps[currentStep as keyof typeof conversationSteps]}
             onNextStep={handleNextStep}
             onSelectAnswer={handleSelectAnswer}
+            selectedAnswer={selectedAnswers[currentStep]}
           />
 
           {/* Show error message if any */}
